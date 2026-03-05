@@ -7,5 +7,5 @@ router = APIRouter()
 
 
 @router.post("/generate-plan", response_model=BuildingPlan)
-def create_plan(input: BuildingInput) -> BuildingPlan:
-    return generate_plan(input)
+def create_plan(building_input: BuildingInput) -> BuildingPlan:
+    return generate_plan(building_input)

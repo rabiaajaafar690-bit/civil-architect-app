@@ -1,7 +1,12 @@
 import json
+import logging
 import os
 
+import google.generativeai as genai
+
 from .schemas import BuildingPlan
+
+logger = logging.getLogger(__name__)
 
 
 def get_ai_suggestions(plan: BuildingPlan) -> str:
@@ -13,8 +18,6 @@ def get_ai_suggestions(plan: BuildingPlan) -> str:
         )
 
     try:
-        import google.generativeai as genai
-
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel("gemini-pro")
 
@@ -28,4 +31,5 @@ def get_ai_suggestions(plan: BuildingPlan) -> str:
         response = model.generate_content(prompt)
         return response.text
     except Exception as e:
-        return f"AI suggestion failed: {e}"
+        logger.exception("AI suggestion failed")
+        return "Unable to generate AI suggestions at this time."
