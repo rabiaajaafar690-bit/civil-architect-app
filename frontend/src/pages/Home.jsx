@@ -26,7 +26,20 @@ export default function Home() {
 
   // Auto-load the basic plan on mount
   useEffect(() => {
-    handleFetchBasic();
+    loadBasicPlan();
+
+    async function loadBasicPlan() {
+      setLoadingBasic(true);
+      setError("");
+      try {
+        const data = await fetchBasicPlan();
+        setBasicPlan(data);
+      } catch {
+        setError("Failed to load basic plan.");
+      } finally {
+        setLoadingBasic(false);
+      }
+    }
   }, []);
 
   async function handleFetchBasic() {

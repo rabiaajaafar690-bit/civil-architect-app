@@ -15,7 +15,8 @@ function WallMesh({ wall }) {
   const cx = (wall.x1 + wall.x2) / 2;
   const cz = (wall.y1 + wall.y2) / 2;
 
-  // rotation around Y axis
+  // rotation around Y axis — atan2(dx, dz) because Three.js Y-up convention
+  // maps 2D x→X and 2D y→Z, so the angle is measured from the Z axis.
   const angle = Math.atan2(dx, dy);
 
   return (
