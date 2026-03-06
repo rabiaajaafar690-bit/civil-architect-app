@@ -5,6 +5,7 @@ import Building3DView from "../components/Building3DView";
 import Plan2DViewer from "../components/Plan2DViewer";
 import Plan3DViewer from "../components/Plan3DViewer";
 import AISuggestions from "../components/AISuggestions";
+import WebGLErrorBoundary from "../components/WebGLErrorBoundary";
 import { generatePlan, getAISuggestions, fetchBasicPlan } from "../services/api";
 
 export default function Home() {
@@ -223,7 +224,9 @@ export default function Home() {
                 basicView === "2d" ? (
                   <Plan2DViewer plan={basicPlan} />
                 ) : (
-                  <Plan3DViewer plan={basicPlan} />
+                  <WebGLErrorBoundary>
+                    <Plan3DViewer plan={basicPlan} />
+                  </WebGLErrorBoundary>
                 )
               )}
             </>
@@ -259,7 +262,9 @@ export default function Home() {
                       floorIndex={selectedFloor}
                     />
                   ) : (
-                    <Building3DView plan={plan} />
+                    <WebGLErrorBoundary>
+                      <Building3DView plan={plan} />
+                    </WebGLErrorBoundary>
                   )}
                 </>
               )}

@@ -2,6 +2,11 @@ const { app, BrowserWindow, dialog } = require("electron");
 const path = require("path");
 const fs = require("fs");
 
+// Bypass Chromium's GPU blocklist so WebGL2 works on systems with
+// older or unrecognised GPU drivers (fixes "WebGL2 blocklisted" errors).
+app.commandLine.appendSwitch("ignore-gpu-blocklist");
+app.commandLine.appendSwitch("enable-webgl");
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
