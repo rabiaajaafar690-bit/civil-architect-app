@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { Stage, Layer, Line, Text } from "react-konva";
 
 const SCALE = 50; // 1 metre = 50 px
@@ -6,11 +6,27 @@ const SCALE = 50; // 1 metre = 50 px
 /**
  * 2D floor-plan viewer using react-konva.
  * Supports mouse-wheel zoom and click-drag panning.
+ * Automatically sizes to fill its parent container.
  *
  * @param {{ walls: Array<{x1:number,y1:number,x2:number,y2:number,thickness:number}> }} props.plan
  */
 export default function Plan2DViewer({ plan }) {
   const stageRef = useRef(null);
+  const containerRef = useRef(null);
+  const [size, setSize] = useState({ width: 800, height: 480 });
+
+  const measure = useCallback(() => {
+    if (containerRef.current) {
+      const { clientWidth } = containerRef.current;
+      setSize({ width: clientWidth, height: Math.max(clientWidth * 0.6, 400) });
+    }
+  }, []);
+
+  useEffect(() => {
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [measure]);
 
   if (!plan || !plan.walls) return null;
 
@@ -43,11 +59,12 @@ export default function Plan2DViewer({ plan }) {
       <h3 className="text-lg font-semibold text-gray-800 mb-2">
         Plan 2D — Basic House
       </h3>
-      <div className="border border-gray-200 rounded-lg overflow-hidden">
+      <div ref={containerRef} className="border border-gray-200 rounded-lg overflow-hidden">
+        {size.width > 0 && size.height > 0 && (
         <Stage
           ref={stageRef}
-          width={800}
-          height={600}
+          width={size.width}
+          height={size.height}
           draggable
           onWheel={handleWheel}
           style={{ background: "#ffffff", cursor: "grab" }}
@@ -106,6 +123,7 @@ export default function Plan2DViewer({ plan }) {
             })}
           </Layer>
         </Stage>
+        )}
       </div>
       <p className="text-xs text-gray-400 mt-2">
         Scroll to zoom · Drag to pan

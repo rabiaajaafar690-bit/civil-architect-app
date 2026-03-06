@@ -1,3 +1,4 @@
+import { useRef, useState, useEffect, useCallback } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 
@@ -34,6 +35,22 @@ function WallMesh({ wall }) {
  * @param {{ walls: Array }} props.plan
  */
 export default function Plan3DViewer({ plan }) {
+  const containerRef = useRef(null);
+  const [height, setHeight] = useState(400);
+
+  const measure = useCallback(() => {
+    if (containerRef.current) {
+      const w = containerRef.current.clientWidth;
+      setHeight(Math.max(w * 0.6, 400));
+    }
+  }, []);
+
+  useEffect(() => {
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [measure]);
+
   if (!plan || !plan.walls) return null;
 
   // Determine bounding box for camera positioning
@@ -51,8 +68,9 @@ export default function Plan3DViewer({ plan }) {
         Maquette 3D — Basic House
       </h3>
       <div
+        ref={containerRef}
         className="border border-gray-200 rounded-lg overflow-hidden"
-        style={{ height: 500 }}
+        style={{ height }}
       >
         <Canvas
           camera={{
