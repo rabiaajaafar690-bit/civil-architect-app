@@ -10,7 +10,11 @@ load_dotenv()
 
 app = FastAPI(title="Civil Architect API")
 
-allowed_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost:4173").split(",")
+allowed_origins = os.getenv(
+    "CORS_ORIGINS",
+    "http://localhost:5173,http://localhost:4173,null",
+).split(",")
+# "null" is the Origin header sent by Electron when loading from file://
 
 app.add_middleware(
     CORSMiddleware,

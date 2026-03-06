@@ -1,6 +1,7 @@
 import { useState } from "react";
 import InputForm from "../components/InputForm";
 import PlanCanvas from "../components/PlanCanvas";
+import Building3DView from "../components/Building3DView";
 import AISuggestions from "../components/AISuggestions";
 import { generatePlan, getAISuggestions } from "../services/api";
 
@@ -11,6 +12,7 @@ export default function Home() {
   const [loadingAI, setLoadingAI] = useState(false);
   const [selectedFloor, setSelectedFloor] = useState(0);
   const [error, setError] = useState("");
+  const [viewMode, setViewMode] = useState("2d"); // "2d" | "3d"
 
   async function handleGenerate(input) {
     setError("");
@@ -35,7 +37,7 @@ export default function Home() {
     try {
       const data = await getAISuggestions(plan);
       setSuggestions(data.suggestions);
-    } catch (err) {
+    } catch {
       setSuggestions("Failed to get AI suggestions. Please try again.");
     } finally {
       setLoadingAI(false);
@@ -47,7 +49,7 @@ export default function Home() {
       <header className="bg-blue-700 text-white py-4 px-6 shadow-md">
         <h1 className="text-2xl font-bold">Civil Architect — AI Building Plan Generator</h1>
         <p className="text-blue-200 text-sm mt-1">
-          Generate 2D building plans and get AI-powered suggestions
+          Generate 2D / 3D building plans and get AI-powered suggestions
         </p>
       </header>
 
@@ -57,13 +59,40 @@ export default function Home() {
           <InputForm onSubmit={handleGenerate} loading={loadingPlan} />
 
           {plan && (
-            <button
-              onClick={handleAISuggest}
-              disabled={loadingAI}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white font-semibold py-2.5 rounded-lg transition-colors"
-            >
-              {loadingAI ? "Analysing…" : "Get AI Suggestions"}
-            </button>
+            <>
+              {/* 2D / 3D toggle */}
+              <div className="flex rounded-lg overflow-hidden border border-gray-300">
+                <button
+                  onClick={() => setViewMode("2d")}
+                  className={`flex-1 py-2 text-sm font-medium transition-colors ${
+                    viewMode === "2d"
+                      ? "bg-blue-600 text-white"
+                      : "bg-white text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  2D Plan
+                </button>
+                <button
+                  onClick={() => setViewMode("3d")}
+                  className={`flex-1 py-2 text-sm font-medium transition-colors ${
+                    viewMode === "3d"
+                      ? "bg-blue-600 text-white"
+                      : "bg-white text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  3D View
+                </button>
+              </div>
+
+              {/* AI Suggestions button */}
+              <button
+                onClick={handleAISuggest}
+                disabled={loadingAI}
+                className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white font-semibold py-2.5 rounded-lg transition-colors"
+              >
+                {loadingAI ? "Analysing…" : "🤖 Get AI Suggestions"}
+              </button>
+            </>
           )}
         </aside>
 
@@ -83,8 +112,8 @@ export default function Home() {
 
           {plan && (
             <>
-              {/* Floor selector */}
-              {plan.floors.length > 1 && (
+              {/* Floor selector (only in 2D mode) */}
+              {viewMode === "2d" && plan.floors.length > 1 && (
                 <div className="flex gap-2 flex-wrap">
                   {plan.floors.map((_, i) => (
                     <button
@@ -102,10 +131,14 @@ export default function Home() {
                 </div>
               )}
 
-              <PlanCanvas
-                floorPlan={plan.floors[selectedFloor]}
-                floorIndex={selectedFloor}
-              />
+              {viewMode === "2d" ? (
+                <PlanCanvas
+                  floorPlan={plan.floors[selectedFloor]}
+                  floorIndex={selectedFloor}
+                />
+              ) : (
+                <Building3DView plan={plan} />
+              )}
             </>
           )}
 
