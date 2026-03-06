@@ -7,6 +7,11 @@ A civil engineering / architecture application with a React frontend, Python Fas
 - **Node.js** (v18 or later) and **npm**
 - **Python 3.10+** and **pip**
 
+> On **WSL / Linux** make sure build essentials are installed:
+> ```bash
+> sudo apt update && sudo apt install -y build-essential python3-venv
+> ```
+
 ## Quick Start (WSL / Linux)
 
 ### 1. Clone the repository
@@ -32,6 +37,12 @@ uvicorn app.main:app --reload
 ```
 
 The API will be available at `http://127.0.0.1:8000`.
+
+*(Optional)* To enable AI suggestions, create a `.env` file in `backend/`:
+
+```
+GEMINI_API_KEY=your-key-here
+```
 
 ### 3. Frontend setup
 
