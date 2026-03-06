@@ -15,6 +15,13 @@ const ROOM_COLORS = [
 function FloorMesh({ floorPlan, floorIndex }) {
   const y = floorIndex * 3.2; // vertical offset per floor
 
+  if (floorPlan.rooms.length === 0) return null;
+
+  const maxX = Math.max(...floorPlan.rooms.map((r) => r.x + r.width));
+  const maxZ = Math.max(...floorPlan.rooms.map((r) => r.y + r.height));
+  const slabCenterX = maxX / 2;
+  const slabCenterZ = maxZ / 2;
+
   return (
     <group position={[0, y, 0]}>
       {/* Rooms */}
@@ -35,19 +42,9 @@ function FloorMesh({ floorPlan, floorIndex }) {
       })}
 
       {/* Floor slab */}
-      <mesh position={[floorPlan.rooms[0]?.x + 0.5 || 0, -0.05, floorPlan.rooms[0]?.y + 0.5 || 0]} receiveShadow>
-        {(() => {
-          const maxX = Math.max(...floorPlan.rooms.map((r) => r.x + r.width));
-          const maxZ = Math.max(...floorPlan.rooms.map((r) => r.y + r.height));
-          const cx = maxX / 2;
-          const cz = maxZ / 2;
-          return (
-            <mesh position={[cx - (floorPlan.rooms[0]?.x + 0.5 || 0), 0, cz - (floorPlan.rooms[0]?.y + 0.5 || 0)]}>
-              <boxGeometry args={[maxX, 0.1, maxZ]} />
-              <meshStandardMaterial color="#d1d5db" />
-            </mesh>
-          );
-        })()}
+      <mesh position={[slabCenterX, -0.05, slabCenterZ]} receiveShadow>
+        <boxGeometry args={[maxX, 0.1, maxZ]} />
+        <meshStandardMaterial color="#d1d5db" />
       </mesh>
 
       {/* Walls */}
