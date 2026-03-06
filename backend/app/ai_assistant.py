@@ -2,8 +2,6 @@ import json
 import logging
 import os
 
-import google.generativeai as genai
-
 from .schemas import BuildingPlan
 
 logger = logging.getLogger(__name__)
@@ -15,6 +13,15 @@ def get_ai_suggestions(plan: BuildingPlan) -> str:
         return (
             "GEMINI_API_KEY is not configured. "
             "Please set the GEMINI_API_KEY environment variable to enable AI suggestions."
+        )
+
+    try:
+        import google.generativeai as genai
+    except ImportError:
+        logger.error("google-generativeai package is not installed")
+        return (
+            "The google-generativeai package is not installed. "
+            "Run: pip install google-generativeai"
         )
 
     try:
@@ -30,6 +37,6 @@ def get_ai_suggestions(plan: BuildingPlan) -> str:
 
         response = model.generate_content(prompt)
         return response.text
-    except Exception as e:
+    except Exception:
         logger.exception("AI suggestion failed")
         return "Unable to generate AI suggestions at this time."
