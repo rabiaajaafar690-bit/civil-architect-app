@@ -24,7 +24,7 @@ export default function Home() {
       setPlan(data);
       setSelectedFloor(0);
     } catch (err) {
-      setError(err.response?.data?.detail || "Failed to generate plan. Make sure the backend is running.");
+      setError(err.response?.data?.detail || "Failed to generate plan. Please check your parameters and try again.");
     } finally {
       setLoadingPlan(false);
     }
