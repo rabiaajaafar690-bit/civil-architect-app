@@ -23,6 +23,7 @@ export default defineConfig({
     proxy: {
       '/generate-plan': 'http://127.0.0.1:8000',
       '/ai': 'http://127.0.0.1:8000',
+      '/api': 'http://127.0.0.1:8000',
     },
   },
 })

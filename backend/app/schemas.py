@@ -47,3 +47,21 @@ class AISuggestRequest(BaseModel):
 
 class AISuggestResponse(BaseModel):
     suggestions: str
+
+
+# ---------------------------------------------------------------------------
+# Basic house plan models (walls with thickness and height for 3D extrusion)
+# ---------------------------------------------------------------------------
+
+
+class HousePlanWall(BaseModel):
+    x1: float
+    y1: float
+    x2: float
+    y2: float
+    thickness: float = 0.2
+    height: float = 2.8
+
+
+class HousePlan(BaseModel):
+    walls: list[HousePlanWall]

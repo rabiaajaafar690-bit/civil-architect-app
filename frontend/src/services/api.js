@@ -35,3 +35,26 @@ export async function getAISuggestions(plan) {
   const response = await api.post("/ai/suggest", { plan });
   return response.data;
 }
+
+/**
+ * Fetch the basic house plan from GET /api/generate-basic-plan.
+ * Falls back to a minimal local plan when the backend is unreachable.
+ */
+export async function fetchBasicPlan() {
+  try {
+    const response = await api.get("/api/generate-basic-plan");
+    return response.data;
+  } catch {
+    // Fallback: simple 10×8 house with an interior partition
+    const W = 10, L = 8, T = 0.2, H = 2.8;
+    return {
+      walls: [
+        { x1: 0, y1: 0, x2: W, y2: 0, thickness: T, height: H },
+        { x1: W, y1: 0, x2: W, y2: L, thickness: T, height: H },
+        { x1: W, y1: L, x2: 0, y2: L, thickness: T, height: H },
+        { x1: 0, y1: L, x2: 0, y2: 0, thickness: T, height: H },
+        { x1: W / 2, y1: 0, x2: W / 2, y2: L, thickness: T, height: H },
+      ],
+    };
+  }
+}
